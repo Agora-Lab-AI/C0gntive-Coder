@@ -6,8 +6,9 @@ import hashlib
 import fnmatch
 import dotenv
 
-from agentRequests import getArchitectureSummary, getCodeArchitectureExplanation
+from src.agents.agentRequests import getArchitectureSummary, getCodeArchitectureExplanation
 dotenv.load_dotenv()
+
 
 def filter_code_files(folder):
     """Filters code files that match the extensions list.

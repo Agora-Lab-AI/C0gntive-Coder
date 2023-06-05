@@ -1,12 +1,17 @@
 from langchain.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate, ChatPromptTemplate
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
+#ingest code -> embed the code -> set up qa langchain bot with the code
+
 
 import dotenv
 dotenv.load_dotenv()
 
 gpt_turbo = ChatOpenAI(temperature=0.7)
 gpt_4 = ChatOpenAI(temperature=.7, model_name='gpt-4')
+
+
+#general prompt with an set of tools or  prompts => selects prompt or tools based on task input
 
 def generateDockerImageName(code_architecture):
     template="You are an AI system tasked with providing the Docker image name for a given codebase architecture. \
