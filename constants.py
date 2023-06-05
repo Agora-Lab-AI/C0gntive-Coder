@@ -1,0 +1,1 @@
+TO_AVOID = [".png",".jpg",".jpeg",".gif",".bmp",".svg",".ico",".tif",".tiff"]
