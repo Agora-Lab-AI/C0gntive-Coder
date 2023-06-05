@@ -1,3 +1,4 @@
+import playwright
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from pydantic import Field
 from langchain.tools import BaseTool, DuckDuckGoSearchRun
@@ -7,21 +8,22 @@ from langchain.chains.qa_with_sources.loading import (
 )
 import os
 from playwright.async_api import async_playwright
+import asyncio
+from langchain.docstore.document import Document
+from langchain.agents import tool
 
 
 web_search = DuckDuckGoSearchRun()
 
 
-def _get_text_splitter():
-    return RecursiveCharacterTextSplitter(
-        # Set a really small chunk size, just to show.
-        chunk_size=3000,
-        chunk_overlap=20,
-        length_function=len,
-    )
 
+# !pip install playwright
+# !playwright install
 async def async_load_playwright(url: str) -> str:
     """Load the specified URLs using Playwright and parse using BeautifulSoup."""
+    from bs4 import BeautifulSoup
+    from playwright.async_api import async_playwright
+
     try:
         print(">>> WARNING <<<")
         print(
@@ -55,21 +57,37 @@ async def async_load_playwright(url: str) -> str:
         await browser.close()
     return results
 
+
+def run_async(coro):
+    event_loop = asyncio.get_event_loop()
+    return event_loop.run_until_complete(coro)
+
+
+@tool
+def browse_web_page(url: str) -> str:
+    """Verbose way to scrape a whole webpage. Likely to cause issues parsing."""
+    return run_async(async_load_playwright(url))
+
+
+def _get_text_splitter():
+    return RecursiveCharacterTextSplitter(
+        # Set a really small chunk size, just to show.
+        chunk_size=3000,
+        chunk_overlap=20,
+        length_function=len,
+    )
+
+
 class WebpageQATool(BaseTool):
     name = "query_webpage"
     description = (
         "Browse a webpage and retrieve the information relevant to the question."
     )
     text_splitter: RecursiveCharacterTextSplitter = Field(
-        default_factory= _get_text_splitter
+        default_factory=_get_text_splitter
     )
     qa_chain: BaseCombineDocumentsChain
 
-    @tool
-    def browse_web_page(url: str) -> str:
-        """Verbose way to scrape a whole webpage. Likely to cause issues parsing."""
-        return run_async(async_load_playwright(url))
-    
     def _run(self, url: str, question: str) -> str:
         """Useful for browsing websites and scraping the text information."""
         result = browse_web_page.run(url)
@@ -94,3 +112,4 @@ class WebpageQATool(BaseTool):
 
     async def _arun(self, url: str, question: str) -> str:
         raise NotImplementedError
+
