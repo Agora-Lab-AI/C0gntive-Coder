@@ -81,6 +81,7 @@ def get_file_hash(file_path):
     with open(file_path, 'rb') as f:
         content = f.read()
         return hashlib.sha256(content).hexdigest()
+
     
 def generate_code_architecture(repo_folder, update=False):
     """Generates code architecture for a repository.

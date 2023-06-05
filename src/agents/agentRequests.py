@@ -7,7 +7,7 @@ from langchain.chains import LLMChain
 import dotenv
 dotenv.load_dotenv()
 
-gpt_turbo = ChatOpenAI(temperature=0.7)
+gpt_turbo = ChatOpenAI(temperature=.7)
 gpt_4 = ChatOpenAI(temperature=.7, model_name='gpt-4')
 
 

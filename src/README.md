@@ -20,3 +20,31 @@
 
 10. **Deployment and Scaling:** Deploying an application and managing scalability can be a complex task. An AI agent could automate the deployment process, perform load balancing, and auto-scale the application based on traffic patterns.
 
+
+
+Feat1: generateDockerImageName
+
+Feat2: getCodeArchitectureExplanation
+
+FEAT3: getArchitectureSummary
+
+Feat4: Generate Code and submit Pull Requests
+
+Feat5: Generate Documentation from code base
+
+Feat6: Infinite Context Length => auto self scaling db parameters? An vector collection for every codebase?
+
+Agent Architecture
+Task Identification Agent: This agent will identify the task to be performed based on natural language processing.
+
+Design and Architecture Agent: Based on the task, this agent will propose a suitable architecture or design.
+
+Code Generation Agent: This agent will generate code based on the proposed design.
+
+Testing Agent: This agent will write and run tests for the code.
+
+Debugging Agent: This agent will debug the code if any issues are identified during the testing phase.
+
+Optimization Agent: This agent will suggest and make changes to optimize the code.
+
+Documentation Agent: This agent will automatically document the code and the system.

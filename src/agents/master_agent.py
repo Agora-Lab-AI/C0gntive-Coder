@@ -1,10 +1,9 @@
-
- 
-
 # !pip install bs4
 # !pip install nest_asyncio
 
 # General
+
+
 import os
 import json
 import pandas as pd
@@ -12,10 +11,6 @@ from dotenv import load_dotenv
 from pathlib import Path
 from json import JSONDecodeError
 from langchain.experimental.autonomous_agents.autogpt.agent import AutoGPT
-from FreeLLM import ChatGPTAPI  # FREE CHATGPT API
-from FreeLLM import HuggingChatAPI  # FREE HUGGINGCHAT API
-from FreeLLM import BingChatAPI  # FREE BINGCHAT API
-from FreeLLM import BardChatAPI  # FREE GOOGLE BARD API
 from langchain.agents.agent_toolkits.pandas.base import create_pandas_dataframe_agent
 from langchain.docstore.document import Document
 import asyncio
@@ -25,12 +20,11 @@ import nest_asyncio
 import faiss
 from langchain.vectorstores import FAISS
 from langchain.docstore import InMemoryDocstore
-from Embedding import HuggingFaceEmbedding  # EMBEDDING FUNCTION
+from embeddings.HuggingFaceEmbedding import hu
 
 from langchain.tools.human.tool import HumanInputRun
 
 # Tools
-import os
 from contextlib import contextmanager
 from typing import Optional
 from langchain.agents import tool
@@ -47,28 +41,27 @@ from langchain.chains.qa_with_sources.loading import (
     load_qa_with_sources_chain,
     BaseCombineDocumentsChain,
 )
+
+from embeddings.HuggingFaceEmbedding import newEmbeddingFunction
 ROOT_DIR = TemporaryDirectory()
 
 
 from langchain import ChatOpenAI, LLMChain, PromptTemplate
 from langchain.memory import ConversationBufferWindowMemory
 #ingest code -> embed the code -> set up qa langchain bot with the code
-# embed stackoverflow
+# embed stackoverflowPromptTemplate
 # embed github
 # add prompts as tools -> generate architecture, documentation
 # add meta prompting
 
 # Define your embedding model
-embeddings_model = HuggingFaceEmbedding.newEmbeddingFunction
+embeddings_model = newEmbeddingFunction
 embedding_size = 1536  # if you change this you need to change also in Embedding/HuggingFaceEmbedding.py
 index = faiss.IndexFlatL2(embedding_size)
 vectorstore = FAISS(embeddings_model, index, InMemoryDocstore({}), {})
 
 
-# Needed synce jupyter runs an async eventloop
-nest_asyncio.apply()
-# [Optional] Set the environment variable Tokenizers_PARALLELISM to false to get rid of the warning
-# os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
 
 load_dotenv()
 select_model = input(
@@ -81,124 +74,7 @@ select_model = input(
 >>> "
 )
 
-
-
-"""
-Feat1: generateDockerImageName
-
-Feat2: getCodeArchitectureExplanation
-
-FEAT3: getArchitectureSummary
-
-Feat4: Generate Code and submit Pull Requests
-
-Feat5: Generate Documentation from code base
-
-Feat6: Infinite Context Length => auto self scaling db parameters? An vector collection for every codebase?
-
-Agent Architecture
-Task Identification Agent: This agent will identify the task to be performed based on natural language processing.
-
-Design and Architecture Agent: Based on the task, this agent will propose a suitable architecture or design.
-
-Code Generation Agent: This agent will generate code based on the proposed design.
-
-Testing Agent: This agent will write and run tests for the code.
-
-Debugging Agent: This agent will debug the code if any issues are identified during the testing phase.
-
-Optimization Agent: This agent will suggest and make changes to optimize the code.
-
-Documentation Agent: This agent will automatically document the code and the system.
-
-
-"""
-
-
-
-
-
-if select_model == "1":
-    CG_TOKEN = os.getenv("CHATGPT_TOKEN", "your-chatgpt-token")
-
-    if CG_TOKEN != "your-chatgpt-token":
-        os.environ["CHATGPT_TOKEN"] = CG_TOKEN
-    else:
-        raise ValueError(
-            "ChatGPT Token EMPTY. Edit the .env file and put your ChatGPT token"
-        )
-
-    start_chat = os.getenv("USE_EXISTING_CHAT", False)
-    if os.getenv("USE_GPT4") == "True":
-        model = "gpt4"
-    else:
-        model = "default"
-
-    if start_chat:
-        chat_id = os.getenv("CHAT_ID")
-        if chat_id == None:
-            raise ValueError("You have to set up your chat-id in the .env file")
-        llm = ChatGPTAPI.ChatGPT(
-            token=os.environ["CHATGPT_TOKEN"], conversation=chat_id, model=model
-        )
-    else:
-        llm = ChatGPTAPI.ChatGPT(token=os.environ["CHATGPT_TOKEN"], model=model)
-
-elif select_model == "2":
-    if not os.path.exists("cookiesHuggingChat.json"):
-        raise ValueError(
-            "File 'cookiesHuggingChat.json' not found! Create it and put your cookies in there in the JSON format."
-        )
-    cookie_path = Path() / "cookiesHuggingChat.json"
-    with open("cookiesHuggingChat.json", "r") as file:
-        try:
-            file_json = json.loads(file.read())
-        except JSONDecodeError:
-            raise ValueError(
-                "You did not put your cookies inside 'cookiesHuggingChat.json'! You can find the simple guide to get the cookie file here: https://github.com/IntelligenzaArtificiale/Free-Auto-GPT"
-            )  
-    llm = HuggingChatAPI.HuggingChat(cookiepath = str(cookie_path))
-
-elif select_model == "3":
-    if not os.path.exists("cookiesBing.json"):
-        raise ValueError(
-            "File 'cookiesBing.json' not found! Create it and put your cookies in there in the JSON format."
-        )
-    cookie_path = Path() / "cookiesBing.json"
-    with open("cookiesBing.json", "r") as file:
-        try:
-            file_json = json.loads(file.read())
-        except JSONDecodeError:
-            raise ValueError(
-                "You did not put your cookies inside 'cookiesBing.json'! You can find the simple guide to get the cookie file here: https://github.com/acheong08/EdgeGPT/tree/master#getting-authentication-required."
-            )
-    llm = BingChatAPI.BingChat(
-        cookiepath=str(cookie_path), conversation_style="creative"
-    )
-
-elif select_model == "4":
-    GB_TOKEN = os.getenv("BARDCHAT_TOKEN", "your-googlebard-token")
-
-    if GB_TOKEN != "your-googlebard-token":
-        os.environ["BARDCHAT_TOKEN"] = GB_TOKEN
-    else:
-        raise ValueError(
-            "GoogleBard Token EMPTY. Edit the .env file and put your GoogleBard token"
-        )
-    cookie_path = os.environ["BARDCHAT_TOKEN"]
-    llm = BardChatAPI.BardChat(cookie=cookie_path)
-
-elif select_model == "5":
-    llm = HuggingFaceAPI.HuggingFace()
-
-HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN", "your-huggingface-token")
-
-if HF_TOKEN != "your-huggingface-token":
-    os.environ["HUGGINGFACEHUB_API_TOKEN"] = HF_TOKEN
-else:
-    raise ValueError(
-        "HuggingFace Token EMPTY. Edit the .env file and put your HuggingFace token"
-    )
+llm = ChatOpenAI(model_name="gpt-4", temperature=1.0)
 
 
 @contextmanager
@@ -212,27 +88,6 @@ def pushd(new_dir):
         os.chdir(prev_dir)
 
 
-@tool
-def process_csv(
-    csv_file_path: str, instructions: str, output_path: Optional[str] = None
-) -> str:
-    """Process a CSV by with pandas in a limited REPL.\
- Only use this after writing data to disk as a csv file.\
- Any figures must be saved to disk to be viewed by the human.\
- Instructions should be written in natural language, not code. Assume the dataframe is already loaded."""
-    with pushd(ROOT_DIR):
-        try:
-            df = pd.read_csv(csv_file_path)
-        except Exception as e:
-            return f"Error: {e}"
-        agent = create_pandas_dataframe_agent(llm, df, max_iterations=30, verbose=True)
-        if output_path is not None:
-            instructions += f" Save output to disk at {output_path}"
-        try:
-            result = agent.run(instructions)
-            return result
-        except Exception as e:
-            return f"Error: {e}"
 
 
 # !pip install playwright
@@ -298,6 +153,8 @@ def _get_text_splitter():
     )
 
 
+
+
 class WebpageQATool(BaseTool):
     name = "query_webpage"
     description = (
@@ -345,7 +202,6 @@ tools = [
     web_search,
     WriteFileTool(),
     ReadFileTool(),
-    process_csv,
     query_website_tool,
     HumanInputRun(), # Activate if you want the permit asking for help from the human
 ]
