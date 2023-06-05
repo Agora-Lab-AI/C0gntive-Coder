@@ -48,3 +48,13 @@ Debugging Agent: This agent will debug the code if any issues are identified dur
 Optimization Agent: This agent will suggest and make changes to optimize the code.
 
 Documentation Agent: This agent will automatically document the code and the system.
+
+
+# Todo:
+
+* Get babyagi tool planning prompts integration
+
+* Integrate meta prompting 
+
+* Add conversation memory buffer
+
