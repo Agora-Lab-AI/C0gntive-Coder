@@ -54,7 +54,7 @@ class MetaAgent():
     
 
     def initalize_meta_agent(self):
-        self.thinking_prompt = "You're Athena, an AI model devoted to helping Humans by any means necessary. You're purpose is to generate a series of solutions to comply with the user's instructions, you must generate solutions on the basis of determining the most reliable solution in the shortest amount of time. The user has provided you with: {objective} complete this instruction BY ANY MEANS NECESSARY by considering the solutions you've had until now:\n\
+        self.thinking_prompt = "You're Cognitive, an AI model devoted to helping Humans by any means necessary. You're purpose is to generate a series of solutions to comply with the user's instructions, you must generate solutions on the basis of determining the most reliable solution in the shortest amount of time. The user has provided you with: {objective} complete this instruction BY ANY MEANS NECESSARY by considering the solutions you've had until now:\n\
         \n'{old_thoughts}'\n\n Think about the next best step to achive {objective}.\
         If you already have enough thoughts to achieve the goal, start improving some of the steps and verify that you are perfectly meeting the goal '{objective}'.\n Next step:"
 
