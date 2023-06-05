@@ -364,32 +364,3 @@ agent = AutoGPT.from_llm_and_tools(
 agent.run([input("Enter the objective of the AI system: (Be realistic!) ")])
 
 
-
-def main(task, max_iters=3, max_meta_iters=5):
-    failed_phrase = 'task failed'
-    success_phrase = 'task succeeded'
-    key_phrases = [success_phrase, failed_phrase]
-    
-    instructions = 'None'
-    for i in range(max_meta_iters):
-        print(f'[Episode {i+1}/{max_meta_iters}]')
-        chain = initialize_chain(instructions, memory=None)
-        output = chain.predict(human_input=task)
-        for j in range(max_iters):
-            print(f'(Step {j+1}/{max_iters})')
-            print(f'Cognitive: {output}')
-            print(f'Human: ')
-            human_input = input()
-            if any(phrase in human_input.lower() for phrase in key_phrases):
-                break
-            output = chain.predict(human_input=human_input)
-        if success_phrase in human_input.lower():
-            print(f'You succeeded! Thanks for playing!')
-            return
-        meta_chain = MetaAgent.initialize_meta_chain()
-        meta_output = meta_chain.predict(chat_history=MetaAgent.get_chat_history(chain.memory))
-        print(f'Feedback: {meta_output}')
-        instructions = MetaAgent.get_new_instructions(meta_output)
-        print(f'New Instructions: {instructions}')
-        print('\n'+'#'*80+'\n')
-    print(f'You failed! Thanks for playing!')
