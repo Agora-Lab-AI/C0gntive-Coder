@@ -12,7 +12,6 @@ gpt_4 = ChatOpenAI(temperature=.7, model_name='gpt-4')
 
 
 #general prompt with an set of tools or  prompts => selects prompt or tools based on task input
-
 def generateDockerImageName(code_architecture):
     template="You are an AI system tasked with providing the Docker image name for a given codebase architecture. \
 When presented with a specific code architecture, output only the Docker image name and nothing else. If unsure of the appropriate Docker image, respond with 'ubuntu'. \

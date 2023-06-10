@@ -1,13 +1,10 @@
-import playwright
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from pydantic import Field
 from langchain.tools import BaseTool, DuckDuckGoSearchRun
 from langchain.chains.qa_with_sources.loading import (
-    load_qa_with_sources_chain,
     BaseCombineDocumentsChain,
 )
 import os
-from playwright.async_api import async_playwright
 import asyncio
 from langchain.docstore.document import Document
 from langchain.agents import tool
